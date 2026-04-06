@@ -130,7 +130,7 @@ function updateNavbar() {
       <li class="nav-item">
         <a class="nav-link fw-semibold" href="/pages/login.html" style="color:#444;">Login</a>
       </li>
-      <li class="nav-item ms-2">
+      <li class="nav-item d-flex align-items-center ms-2">
         <a class="btn btn-primary btn-sm fw-semibold px-3" href="/pages/register.html">Cadastrar</a>
       </li>
     `;

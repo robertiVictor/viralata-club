@@ -16,7 +16,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span>Vira<strong>Lata</strong>Club</a>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span><span>ViraLata Club</span></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -98,6 +98,9 @@
         document.title = `${petAtual.nome} - ViraLata Club`;
 
         const container = document.getElementById('pet-detail');
+        const localizacao = petAtual.cidade
+          ? `${petAtual.cidade}${petAtual.estado ? ', ' + petAtual.estado.toUpperCase() : ''}`
+          : null;
         container.innerHTML = `
           <div class="col-md-6">
             <img src="${petAtual.imagem_url || 'https://placehold.co/600x400?text=Sem+Foto'}" class="img-fluid rounded-3 shadow" alt="Foto de ${petAtual.nome}" style="width:100%; max-height:450px; object-fit:cover;">
@@ -108,10 +111,11 @@
               ${statusBadge(petAtual.status)}
             </div>
             <table class="table">
-              <tr><th style="width:140px">Espécie</th><td>${petAtual.especie}</td></tr>
-              <tr><th>Porte</th><td>${petAtual.porte}</td></tr>
-              <tr><th>Sexo</th><td>${petAtual.sexo === 'macho' ? '♂ Macho' : '♀ Fêmea'}</td></tr>
-              <tr><th>Idade</th><td>${formatIdade(petAtual.idade)}</td></tr>
+              <tr><th style="width:140px">Espécie</th><td>${capitalize(petAtual.especie)}</td></tr>
+              <tr><th>Porte</th><td>${capitalize(petAtual.porte)}</td></tr>
+              <tr><th>Sexo</th><td>${petAtual.sexo === 'macho' ? '<i class="bi bi-gender-male text-primary me-1"></i>Macho' : '<i class="bi bi-gender-female text-danger me-1"></i>Fêmea'}</td></tr>
+              <tr><th>Idade</th><td>${etapaVida(petAtual.idade)} · ${formatIdade(petAtual.idade)}</td></tr>
+              ${localizacao ? `<tr><th>Localização</th><td><i class="bi bi-geo-alt text-danger me-1"></i>${localizacao}</td></tr>` : ''}
             </table>
             <h5>Histórico de Saúde</h5>
             <p>${petAtual.historico_saude}</p>

@@ -29,8 +29,7 @@ body {
 }
 
 .navbar .container {
-  justify-content: space-between;
-  position: relative;
+  position: static;
 }
 
 .navbar-brand {
@@ -58,9 +57,8 @@ body {
 }
 
 .navbar-nav.mx-auto {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1;
+  justify-content: center;
 }
 
 .navbar .nav-link {
@@ -335,22 +333,34 @@ body {
 /* ===== ADMIN SIDEBAR ===== */
 .admin-sidebar {
   min-height: calc(100vh - 56px);
-  background: var(--dark);
+  background: linear-gradient(180deg, var(--primary) 0%, #1a0a40 100%);
 }
 
 .admin-sidebar .nav-link {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.72);
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   margin: 4px 8px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
+  font-weight: 500;
 }
 
-.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .admin-sidebar .nav-link.active {
   color: white;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--accent);
+  box-shadow: 0 4px 14px rgba(123, 47, 190, 0.4);
 }
+
+/* ===== ADMIN STAT CARDS ===== */
+.stat-card.bg-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%) !important; }
+.stat-card.bg-success { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important; }
+.stat-card.bg-warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important; color: white !important; }
+.stat-card.bg-info    { background: linear-gradient(135deg, var(--accent) 0%, #5b21b6 100%) !important; }
 
 /* ===== STAT CARDS ===== */
 .stat-card {
