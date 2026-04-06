@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViraLata Club - Adote um Pet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="page-wrapper">
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>
+  </div>
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span>Vira<strong>Lata</strong>Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/saiba-mais.html">Saiba Mais</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/sobre-nos.html">Sobre Nós</a></li>
+        </ul>
+        <ul class="navbar-nav" id="nav-auth"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-content">
+    <section class="hero-section text-center">
+      <div class="container position-relative" style="z-index:1">
+        <p class="text-white-50 mb-2 fw-semibold" style="letter-spacing:2px; text-transform:uppercase; font-size:.85rem">ONG sem fins lucrativos ❤️</p>
+        <h1>Encontre seu novo<br>melhor amigo</h1>
+        <p class="lead mt-3">O ViraLata Club conecta pets resgatados por ONGs a famílias amorosas.<br>Adote, não compre!</p>
+        <div class="mt-4">
+          <a href="/pages/pets.html" class="btn btn-light btn-lg me-2 fw-semibold" style="color:var(--primary)">
+            <i class="bi bi-search me-1"></i>Ver Pets Disponíveis
+          </a>
+          <a href="/pages/register.html" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-person-plus me-1"></i>Criar Conta
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5" style="background: linear-gradient(180deg,#fff 0%,var(--primary-light) 100%)">
+      <div class="container">
+        <h2 class="text-center fw-bold mb-1">Pets em Destaque</h2>
+        <p class="text-center text-muted mb-4">Esses amigos estão esperando por um lar amoroso</p>
+        <div class="row g-4" id="pets-destaque">
+          <div class="col-12 text-center">
+            <div class="spinner-border" style="color:var(--primary)" role="status"><span class="visually-hidden">Carregando...</span></div>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <a href="/pages/pets.html" class="btn btn-primary px-4">Ver todos os pets &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-5">
+      <div class="container">
+        <h2 class="text-center fw-bold mb-1">Como Funciona?</h2>
+        <p class="text-center text-muted mb-5">Simples, rápido e transparente</p>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="como-funciona-card text-center">
+              <div class="como-funciona-icon"><i class="bi bi-search"></i></div>
+              <h5 class="fw-bold">1. Encontre um Pet</h5>
+              <p class="text-muted small">Navegue pelos pets disponíveis e use os filtros para encontrar o ideal para você.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="como-funciona-card text-center">
+              <div class="como-funciona-icon"><i class="bi bi-heart"></i></div>
+              <h5 class="fw-bold">2. Demonstre Interesse</h5>
+              <p class="text-muted small">Clique em "Tenho Interesse" e envie uma mensagem para a ONG responsável.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="como-funciona-card text-center">
+              <div class="como-funciona-icon"><i class="bi bi-house-heart"></i></div>
+              <h5 class="fw-bold">3. Leve pra Casa</h5>
+              <p class="text-muted small">Após aprovação, combine os detalhes e dê um lar amoroso ao seu novo amigo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="text-center">
+    <div class="container">
+      <p class="mb-0">&copy; 2026 ViraLata Club. Projeto Integrador — Adote, não compre!</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await apiRequest('/pets?limit=6');
+        const container = document.getElementById('pets-destaque');
+        const pets = res.data.pets;
+
+        if (pets.length === 0) {
+          container.innerHTML = '<div class="col-12 text-center text-muted py-4">Nenhum pet disponível no momento.</div>';
+          return;
+        }
+
+        container.innerHTML = pets.map(pet => {
+          const img = pet.imagem_url || '/img/sem-foto.svg';
+          const statusLabel = { disponivel: 'Disponível', em_analise: 'Em Análise', adotado: 'Adotado' }[pet.status] || pet.status;
+          const localizacao = pet.cidade
+            ? `<p class="pet-location mb-2"><i class="bi bi-geo-alt me-1"></i>${pet.cidade}${pet.estado ? ', ' + pet.estado.toUpperCase() : ''}</p>`
+            : '';
+          const generoIcon = pet.sexo === 'macho' ? 'bi-gender-male' : 'bi-gender-female';
+          return `
+            <div class="col-12 col-sm-6 col-lg-4 fade-in-up">
+              <div class="card pet-card shadow-sm">
+                <div class="pet-card-img-container">
+                  <img src="${img}" alt="Foto de ${pet.nome}" loading="lazy" onerror="this.src='/img/sem-foto.svg'">
+                  <span class="pet-card-overlay-badge ${pet.status}">${statusLabel}</span>
+                  <a href="/pages/pet-detail.html?id=${pet.id}" class="pet-card-heart" aria-label="Ver ${pet.nome}">
+                    <i class="bi bi-heart"></i>
+                  </a>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-1">
+                    <h5 class="card-title mb-0 fw-bold">${pet.nome}</h5>
+                    <i class="bi bi-patch-heart-fill" style="color:var(--accent);font-size:1.2rem;"></i>
+                  </div>
+                  <p class="breed-text mb-2">${tipoAnimal(pet.especie)}</p>
+                  <p class="pet-info-row mb-1">
+                    <i class="bi bi-calendar3 me-1"></i>${etapaVida(pet.idade)}
+                    &nbsp;&middot;&nbsp;
+                    <i class="bi ${generoIcon} me-1"></i>${capitalize(pet.sexo)}
+                    &nbsp;&middot;&nbsp;${capitalize(pet.porte)}
+                  </p>
+                  ${localizacao}
+                  <a href="/pages/pet-detail.html?id=${pet.id}" class="btn btn-primary btn-sm w-100 mt-2">Tenho Interesse</a>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (err) {
+        document.getElementById('pets-destaque').innerHTML = '<div class="col-12 text-center text-muted">Erro ao carregar pets.</div>';
+      }
+    });
+  </script>
+</body>
+</html>

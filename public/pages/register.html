@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar - ViraLata Club</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="page-wrapper">
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>
+  </div>
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span>Vira<strong>Lata</strong>Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/saiba-mais.html">Saiba Mais</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/sobre-nos.html">Sobre Nós</a></li>
+        </ul>
+        <ul class="navbar-nav" id="nav-auth"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-content py-5" style="background: linear-gradient(135deg, var(--primary-light) 0%, #fff 100%);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold" style="color:var(--primary)">Criar sua conta</h2>
+          <p class="text-muted">Cadastre-se para solicitar a adoção dos nossos pets.</p>
+        </div>
+        <div class="card shadow border-0 rounded-4">
+          <div class="card-body p-4 p-md-5">
+            <h4 class="text-center mb-4 fw-bold">Cadastrar</h4>
+            <form id="register-form">
+              <div class="mb-3">
+                <label for="nome" class="form-label fw-semibold">Nome completo</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="nome" required placeholder="Seu nome">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label fw-semibold">E-mail</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                  <input type="email" class="form-control" id="email" required placeholder="seu@email.com">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="telefone" class="form-label fw-semibold">Telefone</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                  <input type="tel" class="form-control" id="telefone" placeholder="(11) 99999-0000">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="senha" class="form-label fw-semibold">Senha</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input type="password" class="form-control" id="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+                </div>
+              </div>
+              <div class="mb-4">
+                <label for="confirmar-senha" class="form-label fw-semibold">Confirmar Senha</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                  <input type="password" class="form-control" id="confirmar-senha" required placeholder="Repita a senha">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                <i class="bi bi-person-check me-1"></i>Criar Conta
+              </button>
+            </form>
+            <p class="text-center mt-3 mb-0 text-muted">
+              Já tem conta? <a href="/pages/login.html" class="fw-semibold">Entrar</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <footer class="text-center">
+    <div class="container"><p class="mb-0">&copy; 2026 ViraLata Club.</p></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const senha = document.getElementById('senha').value;
+      const confirmar = document.getElementById('confirmar-senha').value;
+
+      if (senha !== confirmar) {
+        showToast('As senhas não coincidem', 'error');
+        return;
+      }
+
+      showLoading();
+      try {
+        await apiRequest('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            nome: document.getElementById('nome').value,
+            email: document.getElementById('email').value,
+            senha,
+            telefone: document.getElementById('telefone').value || undefined,
+          }),
+        });
+        showToast('Conta criada com sucesso! Faça login.');
+        setTimeout(() => window.location.href = '/pages/login.html', 1000);
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+  </script>
+</body>
+</html>

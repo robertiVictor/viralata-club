@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Pets - ViraLata Club</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>
+  </div>
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">🐕 Vira<span>Lata</span> Club</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/">Site</a></li></ul>
+        <ul class="navbar-nav" id="nav-auth"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar py-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="/pages/admin/dashboard.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/pages/admin/pets-manage.html"><i class="bi bi-heart me-2"></i>Gerenciar Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin/adocoes-manage.html"><i class="bi bi-clipboard-check me-2"></i>Solicitações</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin/users-manage.html"><i class="bi bi-people me-2"></i>Usuários</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin/notificacoes.html"><i class="bi bi-bell me-2"></i>Notificações</a></li>
+        </ul>
+      </nav>
+
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Gerenciar Pets</h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#petModal" onclick="abrirModalNovo()">
+            <i class="bi bi-plus-lg"></i> Novo Pet
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover bg-white rounded shadow-sm">
+            <thead class="table-light">
+              <tr><th>Nome</th><th>Espécie</th><th>Porte</th><th>Idade</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="pets-tbody">
+              <tr><td colspan="6" class="text-center text-muted">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Pet -->
+  <div class="modal fade" id="petModal" tabindex="-1" aria-labelledby="petModalLabel" aria-modal="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="petModalLabel">Novo Pet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="pet-form">
+            <input type="hidden" id="pet-id">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="pet-nome" class="form-label">Nome *</label>
+                <input type="text" class="form-control" id="pet-nome" required>
+              </div>
+              <div class="col-md-6">
+                <label for="pet-especie" class="form-label">Espécie *</label>
+                <select class="form-select" id="pet-especie" required>
+                  <option value="cachorro">Cachorro</option>
+                  <option value="gato">Gato</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="pet-porte" class="form-label">Porte *</label>
+                <select class="form-select" id="pet-porte" required>
+                  <option value="pequeno">Pequeno</option>
+                  <option value="medio">Médio</option>
+                  <option value="grande">Grande</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="pet-idade" class="form-label">Idade (meses) *</label>
+                <input type="number" class="form-control" id="pet-idade" min="0" required>
+              </div>
+              <div class="col-md-4">
+                <label for="pet-sexo" class="form-label">Sexo *</label>
+                <select class="form-select" id="pet-sexo" required>
+                  <option value="macho">Macho</option>
+                  <option value="femea">Fêmea</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="pet-saude" class="form-label">Histórico de Saúde *</label>
+                <textarea class="form-control" id="pet-saude" rows="3" required placeholder="Vacinas, castração, condições..."></textarea>
+              </div>
+              <div class="col-12">
+                <label for="pet-descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="pet-descricao" rows="2" placeholder="Personalidade, hábitos..."></textarea>
+              </div>
+              <div class="col-md-6">
+                <label for="pet-cidade" class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="pet-cidade" placeholder="Ex: São Paulo">
+              </div>
+              <div class="col-md-6">
+                <label for="pet-estado" class="form-label">Estado</label>
+                <select class="form-select" id="pet-estado">
+                  <option value="">Selecione</option>
+                  <option value="AC">AC – Acre</option>
+                  <option value="AL">AL – Alagoas</option>
+                  <option value="AP">AP – Amapá</option>
+                  <option value="AM">AM – Amazonas</option>
+                  <option value="BA">BA – Bahia</option>
+                  <option value="CE">CE – Ceará</option>
+                  <option value="DF">DF – Distrito Federal</option>
+                  <option value="ES">ES – Espírito Santo</option>
+                  <option value="GO">GO – Goiás</option>
+                  <option value="MA">MA – Maranhão</option>
+                  <option value="MT">MT – Mato Grosso</option>
+                  <option value="MS">MS – Mato Grosso do Sul</option>
+                  <option value="MG">MG – Minas Gerais</option>
+                  <option value="PA">PA – Pará</option>
+                  <option value="PB">PB – Paraíba</option>
+                  <option value="PR">PR – Paraná</option>
+                  <option value="PE">PE – Pernambuco</option>
+                  <option value="PI">PI – Piauí</option>
+                  <option value="RJ">RJ – Rio de Janeiro</option>
+                  <option value="RN">RN – Rio Grande do Norte</option>
+                  <option value="RS">RS – Rio Grande do Sul</option>
+                  <option value="RO">RO – Rondônia</option>
+                  <option value="RR">RR – Roraima</option>
+                  <option value="SC">SC – Santa Catarina</option>
+                  <option value="SP">SP – São Paulo</option>
+                  <option value="SE">SE – Sergipe</option>
+                  <option value="TO">TO – Tocantins</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="pet-imagem-file" class="form-label">Imagem do Pet</label>
+                <input type="file" class="form-control" id="pet-imagem-file" accept="image/jpeg,image/png,image/webp">
+                <div id="pet-imagem-preview-container" class="mt-2 d-none">
+                  <img id="pet-imagem-preview" src="" alt="Preview" style="max-height:120px; border-radius:8px; border:1px solid #dee2e6;">
+                </div>
+                <input type="hidden" id="pet-imagem">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btn-salvar-pet">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar Exclusão -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmar Exclusão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">Tem certeza que deseja excluir este pet?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="btn-confirmar-delete">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let petParaDeletar = null;
+
+    async function carregarPets() {
+      try {
+        const res = await apiRequest('/pets?limit=1000');
+        const pets = res.data.pets;
+        const tbody = document.getElementById('pets-tbody');
+
+        if (pets.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhum pet cadastrado.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = pets.map(p => `
+          <tr>
+            <td>${p.nome}</td>
+            <td>${p.especie}</td>
+            <td>${p.porte}</td>
+            <td>${formatIdade(p.idade)}</td>
+            <td>${statusBadge(p.status)}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" onclick="editarPet('${p.id}')"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="confirmarDelete('${p.id}')"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        showToast('Erro ao carregar pets', 'error');
+      }
+    }
+
+    function abrirModalNovo() {
+      document.getElementById('petModalLabel').textContent = 'Novo Pet';
+      document.getElementById('pet-form').reset();
+      document.getElementById('pet-id').value = '';
+      document.getElementById('pet-imagem').value = '';
+      document.getElementById('pet-cidade').value = '';
+      document.getElementById('pet-estado').value = '';
+      document.getElementById('pet-imagem-preview-container').classList.add('d-none');
+    }
+
+    async function editarPet(id) {
+      try {
+        const res = await apiRequest(`/pets/${id}`);
+        const pet = res.data;
+        document.getElementById('petModalLabel').textContent = 'Editar Pet';
+        document.getElementById('pet-id').value = pet.id;
+        document.getElementById('pet-nome').value = pet.nome;
+        document.getElementById('pet-especie').value = pet.especie;
+        document.getElementById('pet-porte').value = pet.porte;
+        document.getElementById('pet-idade').value = pet.idade;
+        document.getElementById('pet-sexo').value = pet.sexo;
+        document.getElementById('pet-saude').value = pet.historico_saude;
+        document.getElementById('pet-descricao').value = pet.descricao || '';
+        document.getElementById('pet-cidade').value = pet.cidade || '';
+        document.getElementById('pet-estado').value = pet.estado || '';
+        document.getElementById('pet-imagem').value = pet.imagem_url || '';
+        // Mostrar imagem atual se existir
+        if (pet.imagem_url) {
+          document.getElementById('pet-imagem-preview').src = pet.imagem_url;
+          document.getElementById('pet-imagem-preview-container').classList.remove('d-none');
+        } else {
+          document.getElementById('pet-imagem-preview-container').classList.add('d-none');
+        }
+        document.getElementById('pet-imagem-file').value = '';
+        new bootstrap.Modal(document.getElementById('petModal')).show();
+      } catch (err) {
+        showToast('Erro ao carregar pet', 'error');
+      }
+    }
+
+    document.getElementById('pet-imagem-file').addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const preview = document.getElementById('pet-imagem-preview');
+        const container = document.getElementById('pet-imagem-preview-container');
+        preview.src = URL.createObjectURL(file);
+        container.classList.remove('d-none');
+      }
+    });
+
+    document.getElementById('btn-salvar-pet').addEventListener('click', async () => {
+      const id = document.getElementById('pet-id').value;
+      const fileInput = document.getElementById('pet-imagem-file');
+
+      showLoading();
+      try {
+        // Se há arquivo selecionado, faz upload primeiro
+        if (fileInput.files && fileInput.files[0]) {
+          const formData = new FormData();
+          formData.append('imagem', fileInput.files[0]);
+          const uploadRes = await fetch('/api/upload/imagem', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${getToken()}` },
+            body: formData
+          });
+          if (!uploadRes.ok) throw new Error('Erro ao fazer upload da imagem');
+          const uploadData = await uploadRes.json();
+          document.getElementById('pet-imagem').value = uploadData.data.url;
+        }
+
+        const dados = {
+          nome: document.getElementById('pet-nome').value,
+          especie: document.getElementById('pet-especie').value,
+          porte: document.getElementById('pet-porte').value,
+          idade: parseInt(document.getElementById('pet-idade').value),
+          sexo: document.getElementById('pet-sexo').value,
+          historico_saude: document.getElementById('pet-saude').value,
+          descricao: document.getElementById('pet-descricao').value || undefined,
+          imagem_url: document.getElementById('pet-imagem').value || undefined,
+          cidade: document.getElementById('pet-cidade').value || undefined,
+          estado: document.getElementById('pet-estado').value || undefined,
+        };
+
+        if (id) {
+          await apiRequest(`/pets/${id}`, { method: 'PUT', body: JSON.stringify(dados) });
+          showToast('Pet atualizado com sucesso!');
+        } else {
+          await apiRequest('/pets', { method: 'POST', body: JSON.stringify(dados) });
+          showToast('Pet cadastrado com sucesso!');
+        }
+        bootstrap.Modal.getInstance(document.getElementById('petModal')).hide();
+        carregarPets();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+
+    function confirmarDelete(id) {
+      petParaDeletar = id;
+      new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    document.getElementById('btn-confirmar-delete').addEventListener('click', async () => {
+      if (!petParaDeletar) return;
+      showLoading();
+      try {
+        await apiRequest(`/pets/${petParaDeletar}`, { method: 'DELETE' });
+        showToast('Pet excluído com sucesso!');
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        carregarPets();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+        petParaDeletar = null;
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!isLoggedIn() || !isAdmin()) { window.location.href = '/pages/login.html'; return; }
+      carregarPets();
+    });
+  </script>
+</body>
+</html>

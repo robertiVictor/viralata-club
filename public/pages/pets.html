@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pets Disponíveis - ViraLata Club</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="page-wrapper">
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>
+  </div>
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span>Vira<strong>Lata</strong>Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/pages/pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/saiba-mais.html">Saiba Mais</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/sobre-nos.html">Sobre Nós</a></li>
+        </ul>
+        <ul class="navbar-nav" id="nav-auth"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-content">
+  <div class="container py-4">
+    <h2 class="mb-4 fw-bold" style="color:var(--primary)">Pets Disponíveis para Adoção</h2>
+
+    <!-- Filtros -->
+    <div class="filter-section">
+      <form id="filter-form" class="row g-3 align-items-end">
+        <div class="col-md-2 col-6">
+          <label for="especie" class="form-label fw-semibold">Espécie</label>
+          <select class="form-select" id="especie">
+            <option value="">Todas</option>
+            <option value="cachorro">Cachorro</option>
+            <option value="gato">Gato</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6">
+          <label for="porte" class="form-label fw-semibold">Porte</label>
+          <select class="form-select" id="porte">
+            <option value="">Todos</option>
+            <option value="pequeno">Pequeno</option>
+            <option value="medio">Médio</option>
+            <option value="grande">Grande</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6">
+          <label for="sexo" class="form-label fw-semibold">Sexo</label>
+          <select class="form-select" id="sexo">
+            <option value="">Ambos</option>
+            <option value="macho">Macho</option>
+            <option value="femea">Fêmea</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6">
+          <label for="cidade" class="form-label fw-semibold">Cidade</label>
+          <input type="text" class="form-control" id="cidade" placeholder="Ex: São Paulo">
+        </div>
+        <div class="col-md-2 col-6">
+          <label for="estado" class="form-label fw-semibold">Estado</label>
+          <select class="form-select" id="estado">
+            <option value="">Todos</option>
+            <option value="AC">AC – Acre</option>
+            <option value="AL">AL – Alagoas</option>
+            <option value="AP">AP – Amapá</option>
+            <option value="AM">AM – Amazonas</option>
+            <option value="BA">BA – Bahia</option>
+            <option value="CE">CE – Ceará</option>
+            <option value="DF">DF – Distrito Federal</option>
+            <option value="ES">ES – Espírito Santo</option>
+            <option value="GO">GO – Goiás</option>
+            <option value="MA">MA – Maranhão</option>
+            <option value="MT">MT – Mato Grosso</option>
+            <option value="MS">MS – Mato Grosso do Sul</option>
+            <option value="MG">MG – Minas Gerais</option>
+            <option value="PA">PA – Pará</option>
+            <option value="PB">PB – Paraíba</option>
+            <option value="PR">PR – Paraná</option>
+            <option value="PE">PE – Pernambuco</option>
+            <option value="PI">PI – Piauí</option>
+            <option value="RJ">RJ – Rio de Janeiro</option>
+            <option value="RN">RN – Rio Grande do Norte</option>
+            <option value="RS">RS – Rio Grande do Sul</option>
+            <option value="RO">RO – Rondônia</option>
+            <option value="RR">RR – Roraima</option>
+            <option value="SC">SC – Santa Catarina</option>
+            <option value="SP">SP – São Paulo</option>
+            <option value="SE">SE – Sergipe</option>
+            <option value="TO">TO – Tocantins</option>
+          </select>
+        </div>
+        <div class="col-md-2 col-6 d-flex gap-2">
+          <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel-fill me-1"></i>Filtrar</button>
+          <button type="button" class="btn btn-outline-secondary" onclick="limparFiltros()" title="Limpar filtros"><i class="bi bi-x-lg"></i></button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Grid de Pets -->
+    <div class="row g-4" id="pets-grid">
+      <div class="col-12 text-center py-5">
+        <div class="spinner-border" style="color:var(--accent)" role="status"><span class="visually-hidden">Carregando...</span></div>
+      </div>
+    </div>
+
+    <!-- Paginação -->
+    <nav class="mt-4" aria-label="Paginação de pets">
+      <ul class="pagination justify-content-center" id="pagination"></ul>
+    </nav>
+  </div>
+  </div>
+
+  <footer class="text-center">
+    <div class="container"><p class="mb-0">&copy; 2026 ViraLata Club.</p></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let currentPage = 1;
+
+    const statusLabels = {
+      disponivel: 'Disponível', em_analise: 'Em Análise', adotado: 'Adotado'
+    };
+
+    function limparFiltros() {
+      document.getElementById('filter-form').reset();
+      loadPets(1);
+    }
+
+    async function loadPets(page = 1) {
+      currentPage = page;
+      const params = new URLSearchParams();
+      params.set('page', page);
+      params.set('limit', '12');
+
+      const especie = document.getElementById('especie').value;
+      const porte   = document.getElementById('porte').value;
+      const sexo    = document.getElementById('sexo').value;
+      const cidade  = document.getElementById('cidade').value;
+      const estado  = document.getElementById('estado').value;
+
+      if (especie) params.set('especie', especie);
+      if (porte)   params.set('porte', porte);
+      if (sexo)    params.set('sexo', sexo);
+      if (cidade)  params.set('cidade', cidade);
+      if (estado)  params.set('estado', estado);
+
+      try {
+        const res = await apiRequest(`/pets?${params.toString()}`);
+        const { pets, pagination } = res.data;
+        const grid = document.getElementById('pets-grid');
+
+        if (pets.length === 0) {
+          grid.innerHTML = `
+            <div class="col-12 text-center py-5">
+              <i class="bi bi-search" style="font-size:3rem;color:#ccc;"></i>
+              <p class="text-muted mt-3">Nenhum pet encontrado com esses filtros.</p>
+              <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltros()">Limpar filtros</button>
+            </div>`;
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+
+        grid.innerHTML = pets.map(pet => {
+          const img = pet.imagem_url || '/img/sem-foto.svg';
+          const statusLabel = statusLabels[pet.status] || pet.status;
+          const localizacao = pet.cidade
+            ? `<p class="pet-location mb-2"><i class="bi bi-geo-alt me-1"></i>${pet.cidade}${pet.estado ? ', ' + pet.estado.toUpperCase() : ''}</p>`
+            : '';
+          const generoIcon = pet.sexo === 'macho' ? 'bi-gender-male' : 'bi-gender-female';
+          return `
+            <div class="col-12 col-sm-6 col-lg-4 fade-in-up">
+              <div class="card pet-card shadow-sm">
+                <div class="pet-card-img-container">
+                  <img src="${img}" alt="Foto de ${pet.nome}" loading="lazy" onerror="this.src='/img/sem-foto.svg'">
+                  <span class="pet-card-overlay-badge ${pet.status}">${statusLabel}</span>
+                  <a href="/pages/pet-detail.html?id=${pet.id}" class="pet-card-heart" aria-label="Ver ${pet.nome}">
+                    <i class="bi bi-heart"></i>
+                  </a>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-1">
+                    <h5 class="card-title mb-0 fw-bold">${pet.nome}</h5>
+                    <i class="bi bi-patch-heart-fill" style="color:var(--accent);font-size:1.2rem;"></i>
+                  </div>
+                  <p class="breed-text mb-2">${tipoAnimal(pet.especie)}</p>
+                  <p class="pet-info-row mb-1">
+                    <i class="bi bi-calendar3 me-1"></i>${etapaVida(pet.idade)}
+                    &nbsp;&middot;&nbsp;
+                    <i class="bi ${generoIcon} me-1"></i>${capitalize(pet.sexo)}
+                    &nbsp;&middot;&nbsp;${capitalize(pet.porte)}
+                  </p>
+                  ${localizacao}
+                  <a href="/pages/pet-detail.html?id=${pet.id}" class="btn btn-primary btn-sm w-100 mt-2">Tenho Interesse</a>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Paginação
+        const pag = document.getElementById('pagination');
+        let pagHtml = '';
+        pagHtml += `<li class="page-item ${pagination.page <= 1 ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="loadPets(${pagination.page - 1}); return false;">&laquo; Anterior</a></li>`;
+        for (let i = 1; i <= pagination.totalPages; i++) {
+          pagHtml += `<li class="page-item ${i === pagination.page ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadPets(${i}); return false;">${i}</a></li>`;
+        }
+        pagHtml += `<li class="page-item ${pagination.page >= pagination.totalPages ? 'disabled' : ''}">
+          <a class="page-link" href="#" onclick="loadPets(${pagination.page + 1}); return false;">Próximo &raquo;</a></li>`;
+        pag.innerHTML = pagHtml;
+      } catch (err) {
+        document.getElementById('pets-grid').innerHTML = '<div class="col-12 text-center text-danger py-4"><i class="bi bi-exclamation-circle me-2"></i>Erro ao carregar pets.</div>';
+      }
+    }
+
+    document.getElementById('filter-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      loadPets(1);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => loadPets());
+  </script>
+</body>
+</html>

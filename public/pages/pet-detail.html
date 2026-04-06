@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Pet - ViraLata Club</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="page-wrapper">
+  <div id="loading" class="loading-overlay" style="display:none;">
+    <div class="spinner-border" role="status"><span class="visually-hidden">Carregando...</span></div>
+  </div>
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span>Vira<strong>Lata</strong>Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/pets.html">Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/saiba-mais.html">Saiba Mais</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/sobre-nos.html">Sobre Nós</a></li>
+        </ul>
+        <ul class="navbar-nav" id="nav-auth"></ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-content">
+  <div class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/pages/pets.html">Pets</a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="breadcrumb-nome">Detalhes</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4" id="pet-detail">
+      <div class="col-12 text-center">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Modal de Interesse -->
+  <div class="modal fade" id="interesseModal" tabindex="-1" aria-labelledby="interesseModalLabel" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="interesseModalLabel">Tenho Interesse em Adotar</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="interesse-form">
+            <div class="mb-3">
+              <label for="mensagem" class="form-label">Mensagem para a ONG (opcional)</label>
+              <textarea class="form-control" id="mensagem" rows="4" placeholder="Conte um pouco sobre você e por que quer adotar..."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btn-confirmar-interesse">Confirmar Interesse</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center">
+    <div class="container"><p class="mb-0">&copy; 2026 ViraLata Club.</p></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let petAtual = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const petId = params.get('id');
+      if (!petId) {
+        window.location.href = '/pages/pets.html';
+        return;
+      }
+
+      try {
+        const res = await apiRequest(`/pets/${petId}`);
+        petAtual = res.data;
+        document.getElementById('breadcrumb-nome').textContent = petAtual.nome;
+        document.title = `${petAtual.nome} - ViraLata Club`;
+
+        const container = document.getElementById('pet-detail');
+        container.innerHTML = `
+          <div class="col-md-6">
+            <img src="${petAtual.imagem_url || 'https://placehold.co/600x400?text=Sem+Foto'}" class="img-fluid rounded-3 shadow" alt="Foto de ${petAtual.nome}" style="width:100%; max-height:450px; object-fit:cover;">
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <h2 class="mb-0">${petAtual.nome}</h2>
+              ${statusBadge(petAtual.status)}
+            </div>
+            <table class="table">
+              <tr><th style="width:140px">Espécie</th><td>${petAtual.especie}</td></tr>
+              <tr><th>Porte</th><td>${petAtual.porte}</td></tr>
+              <tr><th>Sexo</th><td>${petAtual.sexo === 'macho' ? '♂ Macho' : '♀ Fêmea'}</td></tr>
+              <tr><th>Idade</th><td>${formatIdade(petAtual.idade)}</td></tr>
+            </table>
+            <h5>Histórico de Saúde</h5>
+            <p>${petAtual.historico_saude}</p>
+            ${petAtual.descricao ? `<h5>Sobre</h5><p>${petAtual.descricao}</p>` : ''}
+            <div class="mt-4" id="acao-adocao"></div>
+          </div>
+        `;
+
+        // Mostrar botão de interesse se logado e pet disponível
+        const acaoDiv = document.getElementById('acao-adocao');
+        if (petAtual.status === 'disponivel') {
+          if (isLoggedIn() && !isAdmin()) {
+            acaoDiv.innerHTML = `
+              <button class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#interesseModal">
+                <i class="bi bi-heart-fill"></i> Tenho Interesse
+              </button>
+            `;
+          } else if (!isLoggedIn()) {
+            acaoDiv.innerHTML = `
+              <a href="/pages/login.html" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Faça login para adotar
+              </a>
+            `;
+          }
+        }
+      } catch (err) {
+        document.getElementById('pet-detail').innerHTML = '<div class="col-12 text-center text-danger">Pet não encontrado.</div>';
+      }
+    });
+
+    document.getElementById('btn-confirmar-interesse').addEventListener('click', async () => {
+      if (!petAtual) return;
+      showLoading();
+      try {
+        await apiRequest('/adocoes', {
+          method: 'POST',
+          body: JSON.stringify({
+            pet_id: petAtual.id,
+            mensagem: document.getElementById('mensagem').value || undefined,
+          }),
+        });
+        bootstrap.Modal.getInstance(document.getElementById('interesseModal')).hide();
+        showToast('Interesse enviado com sucesso! Acompanhe o status em "Minhas Solicitações".');
+        document.getElementById('acao-adocao').innerHTML = '<div class="alert alert-success">Seu interesse foi enviado! Aguarde a análise da ONG.</div>';
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    });
+  </script>
+</body>
+</html>
