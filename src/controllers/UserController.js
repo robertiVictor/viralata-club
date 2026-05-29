@@ -1,4 +1,4 @@
-const UserService = require('../services/UserService');
+const UserService    = require('../services/UserService');
 const UserRepository = require('../repositories/UserRepository');
 const ResponseFactory = require('../helpers/ResponseFactory');
 
@@ -10,6 +10,35 @@ class UserController {
       const users = await userService.listarTodos();
       return ResponseFactory.success(res, users);
     } catch (err) {
+      next(err);
+    }
+  }
+
+  async listarPendentes(req, res, next) {
+    try {
+      const users = await userService.listarPendentes();
+      return ResponseFactory.success(res, users);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async aprovarCadastro(req, res, next) {
+    try {
+      const user = await userService.aprovarCadastro(req.params.id);
+      return ResponseFactory.success(res, user, 'Cadastro aprovado com sucesso');
+    } catch (err) {
+      if (err.statusCode === 404) return ResponseFactory.notFound(res, err.message);
+      next(err);
+    }
+  }
+
+  async rejeitarCadastro(req, res, next) {
+    try {
+      const user = await userService.rejeitarCadastro(req.params.id);
+      return ResponseFactory.success(res, user, 'Cadastro rejeitado');
+    } catch (err) {
+      if (err.statusCode === 404) return ResponseFactory.notFound(res, err.message);
       next(err);
     }
   }

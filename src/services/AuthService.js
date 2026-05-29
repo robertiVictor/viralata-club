@@ -1,12 +1,18 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt  = require('bcryptjs');
+const jwt     = require('jsonwebtoken');
 
 class AuthService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
 
-  async register({ nome, email, senha, telefone }) {
+  async register({ nome, email, senha, telefone, documento_url }) {
+    if (!documento_url) {
+      const error = new Error('O envio de documento de identificação é obrigatório');
+      error.statusCode = 400;
+      throw error;
+    }
+
     const existente = await this.userRepository.findByEmail(email);
     if (existente) {
       const error = new Error('E-mail já cadastrado');
@@ -15,7 +21,7 @@ class AuthService {
     }
 
     const senha_hash = await bcrypt.hash(senha, 10);
-    const user = await this.userRepository.create({ nome, email, senha_hash, telefone });
+    const user = await this.userRepository.create({ nome, email, senha_hash, telefone, documento_url });
     return user;
   }
 
@@ -29,6 +35,18 @@ class AuthService {
 
     if (user.bloqueado) {
       const error = new Error('Conta bloqueada. Entre em contato com a administração');
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (user.status_cadastro === 'pendente') {
+      const error = new Error('Seu cadastro está aguardando aprovação da equipe ViraLata Club');
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (user.status_cadastro === 'rejeitado') {
+      const error = new Error('Seu cadastro foi rejeitado. Entre em contato com a administração');
       error.statusCode = 403;
       throw error;
     }
@@ -48,11 +66,7 @@ class AuthService {
 
     return {
       token,
-      user: {
-        id: user.id,
-        nome: user.nome,
-        role: user.role,
-      },
+      user: { id: user.id, nome: user.nome, role: user.role },
     };
   }
 

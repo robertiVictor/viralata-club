@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -33,64 +33,105 @@
   </nav>
 
   <div class="page-content py-5" style="background: linear-gradient(135deg, var(--primary-light) 0%, #fff 100%);">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="text-center mb-4">
-          <h2 class="fw-bold" style="color:var(--primary)">Criar sua conta</h2>
-          <p class="text-muted">Cadastre-se para solicitar a adoção dos nossos pets.</p>
-        </div>
-        <div class="card shadow border-0 rounded-4">
-          <div class="card-body p-4 p-md-5">
-            <h4 class="text-center mb-4 fw-bold">Cadastrar</h4>
-            <form id="register-form">
-              <div class="mb-3">
-                <label for="nome" class="form-label fw-semibold">Nome completo</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-person"></i></span>
-                  <input type="text" class="form-control" id="nome" required placeholder="Seu nome">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+          <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color:var(--primary)">Criar sua conta</h2>
+            <p class="text-muted">Cadastre-se e envie seu documento para poder adotar.</p>
+          </div>
+          <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+              <h4 class="text-center mb-4 fw-bold">Cadastrar</h4>
+
+              <!-- Aviso do fluxo de aprovação -->
+              <div class="alert alert-info d-flex align-items-start gap-2 mb-4" role="alert" style="background:#e0f7f5;border-color:#99f6e4;color:var(--dark)">
+                <i class="bi bi-info-circle-fill mt-1 flex-shrink-0" style="color:var(--primary)"></i>
+                <div>
+                  <strong>Como funciona?</strong><br>
+                  Após o cadastro, a equipe analisará seus dados e documento. Você receberá a aprovação em até 24h e poderá fazer login em seguida.
                 </div>
               </div>
-              <div class="mb-3">
-                <label for="email" class="form-label fw-semibold">E-mail</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                  <input type="email" class="form-control" id="email" required placeholder="seu@email.com">
+
+              <form id="register-form" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="nome" class="form-label fw-semibold">Nome completo</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" id="nome" required placeholder="Seu nome completo">
+                  </div>
                 </div>
-              </div>
-              <div class="mb-3">
-                <label for="telefone" class="form-label fw-semibold">Telefone</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                  <input type="tel" class="form-control" id="telefone" placeholder="(11) 99999-0000">
+
+                <div class="mb-3">
+                  <label for="email" class="form-label fw-semibold">E-mail</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control" id="email" required placeholder="seu@email.com">
+                  </div>
                 </div>
-              </div>
-              <div class="mb-3">
-                <label for="senha" class="form-label fw-semibold">Senha</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                  <input type="password" class="form-control" id="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+
+                <div class="mb-3">
+                  <label for="telefone" class="form-label fw-semibold">Telefone</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                    <input type="tel" class="form-control" id="telefone" placeholder="(62) 99999-0000">
+                  </div>
                 </div>
-              </div>
-              <div class="mb-4">
-                <label for="confirmar-senha" class="form-label fw-semibold">Confirmar Senha</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                  <input type="password" class="form-control" id="confirmar-senha" required placeholder="Repita a senha">
+
+                <div class="mb-3">
+                  <label for="senha" class="form-label fw-semibold">Senha</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" class="form-control" id="senha" required minlength="6" placeholder="Mínimo 6 caracteres">
+                  </div>
                 </div>
-              </div>
-              <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                <i class="bi bi-person-check me-1"></i>Criar Conta
-              </button>
-            </form>
-            <p class="text-center mt-3 mb-0 text-muted">
-              Já tem conta? <a href="/pages/login.html" class="fw-semibold">Entrar</a>
-            </p>
+
+                <div class="mb-4">
+                  <label for="confirmar-senha" class="form-label fw-semibold">Confirmar Senha</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" class="form-control" id="confirmar-senha" required placeholder="Repita a senha">
+                  </div>
+                </div>
+
+                <!-- Upload de documento -->
+                <div class="mb-4">
+                  <label for="documento" class="form-label fw-semibold">
+                    Documento de identificação <span class="text-danger">*</span>
+                  </label>
+                  <div class="upload-doc-area" id="upload-doc-area">
+                    <input type="file" class="d-none" id="documento" name="documento" accept=".pdf,.jpg,.jpeg,.png,.webp" required>
+                    <div id="upload-doc-placeholder" class="text-center py-3" onclick="document.getElementById('documento').click()" style="cursor:pointer;">
+                      <i class="bi bi-file-earmark-arrow-up fs-2" style="color:var(--primary)"></i>
+                      <p class="mb-1 fw-semibold mt-2" style="color:var(--primary)">Clique para enviar documento</p>
+                      <p class="text-muted small mb-0">RG, CPF ou Comprovante de Residência<br>PDF, JPG ou PNG • máx. 10 MB</p>
+                    </div>
+                    <div id="upload-doc-preview" class="d-none align-items-center gap-3 px-3 py-2">
+                      <i class="bi bi-file-earmark-check-fill fs-3" style="color:var(--success)"></i>
+                      <div class="flex-grow-1">
+                        <p class="mb-0 fw-semibold" id="doc-filename"></p>
+                        <p class="text-muted small mb-0" id="doc-filesize"></p>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerDocumento()">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-text">Documento exigido para validação do cadastro pelo administrador.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                  <i class="bi bi-person-check me-1"></i>Criar Conta
+                </button>
+              </form>
+              <p class="text-center mt-3 mb-0 text-muted">
+                Já tem conta? <a href="/pages/login.html" class="fw-semibold">Entrar</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 
   <footer class="text-center">
@@ -100,29 +141,68 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/app.js"></script>
   <script>
+    // ── Área de upload visual ───────────────────────────────────────────────
+    const inputDoc = document.getElementById('documento');
+
+    inputDoc.addEventListener('change', () => {
+      const file = inputDoc.files[0];
+      if (!file) return;
+      document.getElementById('doc-filename').textContent = file.name;
+      document.getElementById('doc-filesize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+      document.getElementById('upload-doc-placeholder').classList.add('d-none');
+      document.getElementById('upload-doc-preview').classList.remove('d-none');
+      document.getElementById('upload-doc-preview').classList.add('d-flex');
+    });
+
+    function removerDocumento() {
+      inputDoc.value = '';
+      document.getElementById('upload-doc-placeholder').classList.remove('d-none');
+      document.getElementById('upload-doc-preview').classList.add('d-none');
+      document.getElementById('upload-doc-preview').classList.remove('d-flex');
+    }
+
+    // ── Drag & Drop ─────────────────────────────────────────────────────────
+    const dropArea = document.getElementById('upload-doc-area');
+    ['dragenter','dragover'].forEach(ev => dropArea.addEventListener(ev, e => { e.preventDefault(); dropArea.classList.add('drag-over'); }));
+    ['dragleave','drop'].forEach(ev => dropArea.addEventListener(ev, e => { e.preventDefault(); dropArea.classList.remove('drag-over'); }));
+    dropArea.addEventListener('drop', e => {
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        inputDoc.files = dt.files;
+        inputDoc.dispatchEvent(new Event('change'));
+      }
+    });
+
+    // ── Submit do formulário ────────────────────────────────────────────────
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const senha = document.getElementById('senha').value;
-      const confirmar = document.getElementById('confirmar-senha').value;
 
-      if (senha !== confirmar) {
-        showToast('As senhas não coincidem', 'error');
-        return;
-      }
+      const senha    = document.getElementById('senha').value;
+      const confirmar = document.getElementById('confirmar-senha').value;
+      if (senha !== confirmar) { showToast('As senhas não coincidem', 'error'); return; }
+
+      if (!inputDoc.files[0]) { showToast('Envie um documento de identificação', 'error'); return; }
 
       showLoading();
       try {
-        await apiRequest('/auth/register', {
+        const formData = new FormData();
+        formData.append('nome',      document.getElementById('nome').value);
+        formData.append('email',     document.getElementById('email').value);
+        formData.append('senha',     senha);
+        formData.append('telefone',  document.getElementById('telefone').value || '');
+        formData.append('documento', inputDoc.files[0]);
+
+        const response = await fetch('/api/auth/register', {
           method: 'POST',
-          body: JSON.stringify({
-            nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value,
-            senha,
-            telefone: document.getElementById('telefone').value || undefined,
-          }),
+          body: formData,   // sem Content-Type — browser define o boundary
         });
-        showToast('Conta criada com sucesso! Faça login.');
-        setTimeout(() => window.location.href = '/pages/login.html', 1000);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Erro no cadastro');
+
+        showToast('Cadastro enviado! Aguarde a aprovação da equipe para fazer login.');
+        setTimeout(() => window.location.href = '/pages/login.html', 2000);
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
@@ -130,5 +210,19 @@
       }
     });
   </script>
+
+  <style>
+    .upload-doc-area {
+      border: 2px dashed var(--primary-mid);
+      border-radius: 12px;
+      background: var(--primary-light);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .upload-doc-area:hover,
+    .upload-doc-area.drag-over {
+      border-color: var(--primary);
+      background: #b2f5e8;
+    }
+  </style>
 </body>
 </html>

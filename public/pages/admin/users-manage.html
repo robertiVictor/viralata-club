@@ -17,7 +17,7 @@
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span class="brand-logo-icon"><i class="bi bi-heart-fill"></i></span><span>ViraLata Club</span></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navegação">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -40,14 +40,35 @@
       </nav>
 
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-        <h2 class="mb-4">Gerenciar Usuários</h2>
+
+        <!-- ── Cadastros Pendentes ──────────────────────────────────────── -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h4 class="mb-0 d-flex align-items-center gap-2">
+            <span class="badge rounded-pill text-bg-warning" id="badge-pendentes">0</span>
+            Cadastros Aguardando Aprovação
+          </h4>
+        </div>
+
+        <div id="pendentes-empty" class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert" style="display:none!important">
+          <i class="bi bi-check-circle-fill"></i> Nenhum cadastro pendente.
+        </div>
+
+        <div class="row g-3 mb-5" id="pendentes-grid">
+          <div class="col-12 text-center text-muted py-3">Carregando...</div>
+        </div>
+
+        <!-- ── Todos os Usuários ───────────────────────────────────────── -->
+        <h4 class="mb-3">Todos os Usuários</h4>
         <div class="table-responsive">
           <table class="table table-hover bg-white rounded shadow-sm">
             <thead class="table-light">
-              <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Role</th><th>Status</th><th>Cadastro</th><th>Ações</th></tr>
+              <tr>
+                <th>Nome</th><th>E-mail</th><th>Telefone</th>
+                <th>Role</th><th>Cadastro</th><th>Conta</th><th>Data</th><th>Ações</th>
+              </tr>
             </thead>
             <tbody id="users-tbody">
-              <tr><td colspan="7" class="text-center text-muted">Carregando...</td></tr>
+              <tr><td colspan="8" class="text-center text-muted">Carregando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -55,13 +76,32 @@
     </div>
   </div>
 
-  <!-- Modal Confirmar Exclusão -->
+  <!-- Modal — Visualizar Documento -->
+  <div class="modal fade" id="docModal" tabindex="-1" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Documento do Usuário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center p-0" id="doc-modal-body" style="min-height:300px;background:#f8f8f8;"></div>
+        <div class="modal-footer">
+          <a href="#" id="doc-download-link" target="_blank" class="btn btn-outline-secondary">
+            <i class="bi bi-download me-1"></i>Abrir em nova aba
+          </a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal — Confirmar Exclusão -->
   <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-modal="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Confirmar Exclusão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">Tem certeza que deseja excluir este usuário?</div>
         <div class="modal-footer">
@@ -77,9 +117,77 @@
   <script>
     let userParaDeletar = null;
 
+    // ── Status de Cadastro badge ────────────────────────────────────────────
+    function cadastroBadge(status) {
+      const map = {
+        pendente:  '<span class="badge bg-warning text-dark">Pendente</span>',
+        aprovado:  '<span class="badge bg-success">Aprovado</span>',
+        rejeitado: '<span class="badge bg-danger">Rejeitado</span>',
+      };
+      return map[status] || `<span class="badge bg-secondary">${status}</span>`;
+    }
+
+    // ── Carregar cadastros pendentes ────────────────────────────────────────
+    async function carregarPendentes() {
+      try {
+        const res   = await apiRequest('/users/pendentes');
+        const users = res.data;
+        const grid  = document.getElementById('pendentes-grid');
+        const badge = document.getElementById('badge-pendentes');
+        badge.textContent = users.length;
+
+        if (users.length === 0) {
+          grid.innerHTML = `
+            <div class="col-12">
+              <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-check-circle-fill"></i> Nenhum cadastro pendente no momento.
+              </div>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = users.map(u => `
+          <div class="col-md-6 col-xl-4" id="card-pendente-${u.id}">
+            <div class="card border-0 shadow-sm h-100" style="border-left:4px solid var(--warning)!important;border-radius:12px;">
+              <div class="card-body">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div style="width:44px;height:44px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--primary);">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="flex-grow-1 min-w-0">
+                    <p class="mb-0 fw-semibold text-truncate">${u.nome}</p>
+                    <p class="text-muted small mb-0 text-truncate">${u.email}</p>
+                  </div>
+                  <span class="badge bg-warning text-dark flex-shrink-0">Pendente</span>
+                </div>
+                <p class="small text-muted mb-3">
+                  <i class="bi bi-calendar3 me-1"></i>${new Date(u.created_at).toLocaleDateString('pt-BR')}
+                  ${u.telefone ? `<br><i class="bi bi-telephone me-1"></i>${u.telefone}` : ''}
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                  ${u.documento_url ? `
+                    <button class="btn btn-sm btn-outline-secondary" onclick="verDocumento('${u.documento_url}')">
+                      <i class="bi bi-file-earmark-text me-1"></i>Ver Documento
+                    </button>` : `<span class="text-muted small fst-italic"><i class="bi bi-exclamation-triangle me-1"></i>Sem documento</span>`}
+                  <button class="btn btn-sm btn-success" onclick="aprovarCadastro('${u.id}')">
+                    <i class="bi bi-check-lg me-1"></i>Aprovar
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="rejeitarCadastro('${u.id}')">
+                    <i class="bi bi-x-lg me-1"></i>Rejeitar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>`).join('');
+      } catch (err) {
+        showToast('Erro ao carregar pendentes', 'error');
+      }
+    }
+
+    // ── Carregar todos os usuários ──────────────────────────────────────────
     async function carregarUsers() {
       try {
-        const res = await apiRequest('/users');
+        const res   = await apiRequest('/users');
         const users = res.data;
         const tbody = document.getElementById('users-tbody');
 
@@ -89,23 +197,77 @@
             <td>${u.email}</td>
             <td>${u.telefone || '—'}</td>
             <td><span class="badge ${u.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">${u.role}</span></td>
+            <td>${cadastroBadge(u.status_cadastro)}</td>
             <td>${u.bloqueado ? '<span class="badge bg-danger">Bloqueado</span>' : '<span class="badge bg-success">Ativo</span>'}</td>
             <td>${new Date(u.created_at).toLocaleDateString('pt-BR')}</td>
             <td>
               ${u.role !== 'admin' ? `
-                <button class="btn btn-sm btn-outline-warning me-1" onclick="toggleBloquear('${u.id}')" title="${u.bloqueado ? 'Desbloquear' : 'Bloquear'}">
-                  <i class="bi bi-${u.bloqueado ? 'unlock' : 'lock'}"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="confirmarDeleteUser('${u.id}')"><i class="bi bi-trash"></i></button>
+                <div class="d-flex gap-1 flex-wrap">
+                  ${u.documento_url ? `
+                    <button class="btn btn-sm btn-outline-info" onclick="verDocumento('${u.documento_url}')" title="Ver Documento">
+                      <i class="bi bi-file-earmark-text"></i>
+                    </button>` : ''}
+                  <button class="btn btn-sm btn-outline-warning" onclick="toggleBloquear('${u.id}')" title="${u.bloqueado ? 'Desbloquear' : 'Bloquear'}">
+                    <i class="bi bi-${u.bloqueado ? 'unlock' : 'lock'}"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="confirmarDeleteUser('${u.id}')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
               ` : '—'}
             </td>
-          </tr>
-        `).join('');
+          </tr>`).join('');
       } catch (err) {
         showToast('Erro ao carregar usuários', 'error');
       }
     }
 
+    // ── Aprovar / Rejeitar cadastro ─────────────────────────────────────────
+    async function aprovarCadastro(id) {
+      showLoading();
+      try {
+        await apiRequest(`/users/${id}/aprovar-cadastro`, { method: 'PATCH' });
+        showToast('Cadastro aprovado com sucesso!');
+        document.getElementById(`card-pendente-${id}`)?.remove();
+        const badge = document.getElementById('badge-pendentes');
+        badge.textContent = Math.max(0, parseInt(badge.textContent) - 1);
+        carregarUsers();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function rejeitarCadastro(id) {
+      showLoading();
+      try {
+        await apiRequest(`/users/${id}/rejeitar-cadastro`, { method: 'PATCH' });
+        showToast('Cadastro rejeitado.');
+        document.getElementById(`card-pendente-${id}`)?.remove();
+        const badge = document.getElementById('badge-pendentes');
+        badge.textContent = Math.max(0, parseInt(badge.textContent) - 1);
+        carregarUsers();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // ── Visualizar Documento ────────────────────────────────────────────────
+    function verDocumento(url) {
+      const body = document.getElementById('doc-modal-body');
+      const link = document.getElementById('doc-download-link');
+      link.href = url;
+      const isPdf = url.toLowerCase().endsWith('.pdf');
+      body.innerHTML = isPdf
+        ? `<iframe src="${url}" style="width:100%;height:500px;border:none;" title="Documento"></iframe>`
+        : `<img src="${url}" class="img-fluid" style="max-height:500px;object-fit:contain;padding:12px;" alt="Documento" onerror="this.src='/img/sem-imagem.png'">`;
+      new bootstrap.Modal(document.getElementById('docModal')).show();
+    }
+
+    // ── Bloquear / Desbloquear ──────────────────────────────────────────────
     async function toggleBloquear(id) {
       showLoading();
       try {
@@ -119,6 +281,7 @@
       }
     }
 
+    // ── Excluir ─────────────────────────────────────────────────────────────
     function confirmarDeleteUser(id) {
       userParaDeletar = id;
       new bootstrap.Modal(document.getElementById('deleteUserModal')).show();
@@ -131,6 +294,7 @@
         await apiRequest(`/users/${userParaDeletar}`, { method: 'DELETE' });
         showToast('Usuário excluído com sucesso!');
         bootstrap.Modal.getInstance(document.getElementById('deleteUserModal')).hide();
+        carregarPendentes();
         carregarUsers();
       } catch (err) {
         showToast(err.message, 'error');
@@ -140,8 +304,10 @@
       }
     });
 
+    // ── Init ────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
       if (!isLoggedIn() || !isAdmin()) { window.location.href = '/pages/login.html'; return; }
+      carregarPendentes();
       carregarUsers();
     });
   </script>

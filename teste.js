@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-console.log('🔧 Testando conexão com:');
+console.log('Testando conexão com:');
 console.log('Host:', process.env.DB_HOST);
 console.log('Port:', process.env.DB_PORT);
 console.log('User:', process.env.DB_USER);
