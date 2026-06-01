@@ -1,12 +1,12 @@
 const { getPool } = require('../config/database');
 
 class AdocaoRepository {
-  async create({ pet_id, adotante_id, mensagem }) {
+  async create({ pet_id, adotante_id, mensagem, perguntas, doc_identidade_url, foto_local_url }) {
     const pool = getPool();
     const { rows } = await pool.query(
-      `INSERT INTO adocoes (pet_id, adotante_id, mensagem)
-       VALUES ($1, $2, $3) RETURNING *`,
-      [pet_id, adotante_id, mensagem]
+      `INSERT INTO adocoes (pet_id, adotante_id, mensagem, perguntas, doc_identidade_url, foto_local_url)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [pet_id, adotante_id, mensagem || null, perguntas ? JSON.stringify(perguntas) : null, doc_identidade_url || null, foto_local_url || null]
     );
     return rows[0];
   }

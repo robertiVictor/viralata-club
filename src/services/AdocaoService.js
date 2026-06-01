@@ -8,7 +8,7 @@ class AdocaoService {
     this.mensageriaService    = new MensageriaService();
   }
 
-  async enviarInteresse({ pet_id, adotante_id, mensagem }) {
+  async enviarInteresse({ pet_id, adotante_id, mensagem, perguntas, doc_identidade_url, foto_local_url }) {
     const pet = await this.petRepository.findById(pet_id);
     if (!pet) {
       const error = new Error('Pet não encontrado');
@@ -30,7 +30,7 @@ class AdocaoService {
     }
 
     // Criar solicitação com status 'pendente' — o worker vai mover para 'em_analise'
-    const adocao = await this.adocaoRepository.create({ pet_id, adotante_id, mensagem });
+    const adocao = await this.adocaoRepository.create({ pet_id, adotante_id, mensagem, perguntas, doc_identidade_url, foto_local_url });
 
     // Publicar na fila para processamento assíncrono
     const publicado = this.mensageriaService.publicarSolicitacaoAdocao({

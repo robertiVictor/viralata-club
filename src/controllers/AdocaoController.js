@@ -13,11 +13,14 @@ const adocaoService = new AdocaoService(
 class AdocaoController {
   async enviarInteresse(req, res, next) {
     try {
-      const { pet_id, mensagem } = req.body;
+      const { pet_id, mensagem, perguntas, doc_identidade_url, foto_local_url } = req.body;
       const adocao = await adocaoService.enviarInteresse({
         pet_id,
         adotante_id: req.user.id,
         mensagem,
+        perguntas,
+        doc_identidade_url,
+        foto_local_url,
       });
       return ResponseFactory.created(res, adocao, 'Interesse enviado com sucesso');
     } catch (err) {

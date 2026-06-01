@@ -52,23 +52,162 @@
 
   <!-- Modal de Interesse -->
   <div class="modal fade" id="interesseModal" tabindex="-1" aria-labelledby="interesseModalLabel" aria-modal="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="interesseModalLabel">Tenho Interesse em Adotar</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body">
-          <form id="interesse-form">
-            <div class="mb-3">
-              <label for="mensagem" class="form-label">Mensagem para a ONG (opcional)</label>
-              <textarea class="form-control" id="mensagem" rows="4" placeholder="Conte um pouco sobre você e por que quer adotar..."></textarea>
+
+        <div class="modal-header flex-column align-items-start pb-0 border-0">
+          <div class="d-flex w-100 align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="modal-title" id="interesseModalLabel">
+                <i class="bi bi-heart-fill text-success me-2"></i>Solicitação de Adoção
+              </h5>
             </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <!-- Indicador de progresso -->
+          <div class="w-100 mb-3">
+            <div class="d-flex align-items-center gap-0">
+              <div class="step-dot active" id="dot-1">1</div>
+              <div class="step-line flex-grow-1" id="line-1"></div>
+              <div class="step-dot" id="dot-2">2</div>
+              <div class="step-line flex-grow-1" id="line-2"></div>
+              <div class="step-dot" id="dot-3">3</div>
+            </div>
+            <div class="d-flex justify-content-between mt-1">
+              <span class="step-label">Sobre Você</span>
+              <span class="step-label">Documentação</span>
+              <span class="step-label">Mensagem</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-body pt-0">
+          <form id="interesse-form" novalidate>
+
+            <!-- PASSO 1: Perguntas -->
+            <div class="form-step" id="step-1">
+              <p class="text-muted small mb-3">Responda às perguntas abaixo para nos ajudar a encontrar o lar ideal para o pet.</p>
+
+              <div class="question-item">
+                <span class="question-number">1</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Você tem experiência prévia com animais de estimação?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_experiencia" id="q_exp_sim" value="true"><label class="form-check-label" for="q_exp_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_experiencia" id="q_exp_nao" value="false"><label class="form-check-label" for="q_exp_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">2</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Todos os moradores da sua residência concordam com a adoção?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_moradores" id="q_mor_sim" value="true"><label class="form-check-label" for="q_mor_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_moradores" id="q_mor_nao" value="false"><label class="form-check-label" for="q_mor_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">3</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Você tem outros animais em casa?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_outros_animais" id="q_out_sim" value="true"><label class="form-check-label" for="q_out_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_outros_animais" id="q_out_nao" value="false"><label class="form-check-label" for="q_out_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">4</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Há crianças menores de 10 anos na sua residência?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_criancas" id="q_cri_sim" value="true"><label class="form-check-label" for="q_cri_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_criancas" id="q_cri_nao" value="false"><label class="form-check-label" for="q_cri_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">5</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">O animal terá espaço para se movimentar (quintal, varanda ou área aberta)?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_area_externa" id="q_are_sim" value="true"><label class="form-check-label" for="q_are_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_area_externa" id="q_are_nao" value="false"><label class="form-check-label" for="q_are_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">6</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Você está ciente dos custos com ração, veterinário e higiene do animal?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_ciente_custos" id="q_cus_sim" value="true"><label class="form-check-label" for="q_cus_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_ciente_custos" id="q_cus_nao" value="false"><label class="form-check-label" for="q_cus_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="question-item">
+                <span class="question-number">7</span>
+                <div class="flex-grow-1">
+                  <p class="mb-2 fw-semibold">Você se compromete a nunca abandonar o animal adotado?</p>
+                  <div class="d-flex gap-4">
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_compromisso" id="q_com_sim" value="true"><label class="form-check-label" for="q_com_sim">Sim</label></div>
+                    <div class="form-check"><input class="form-check-input" type="radio" name="q_compromisso" id="q_com_nao" value="false"><label class="form-check-label" for="q_com_nao">Não</label></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASSO 2: Documentação -->
+            <div class="form-step d-none" id="step-2">
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Documento de Identidade <span class="text-danger">*</span></label>
+                <p class="text-muted small mb-2">Envie uma foto ou PDF do seu RG, CPF ou CNH.</p>
+                <input type="file" class="form-control" id="doc_identidade" accept=".jpg,.jpeg,.png,.webp,.pdf">
+                <div class="form-text">Formatos aceitos: JPG, PNG, WebP, PDF &bull; Máx. 10MB</div>
+              </div>
+              <div>
+                <label class="form-label fw-semibold">Foto do Local <span class="text-danger">*</span></label>
+                <p class="text-muted small mb-2">Envie uma foto do espaço onde o animal irá ficar (quarto, quintal, sala...).</p>
+                <input type="file" class="form-control" id="foto_local" accept=".jpg,.jpeg,.png,.webp">
+                <div class="form-text">Formatos aceitos: JPG, PNG, WebP &bull; Máx. 10MB</div>
+              </div>
+            </div>
+
+            <!-- PASSO 3: Mensagem -->
+            <div class="form-step d-none" id="step-3">
+              <div class="text-center mb-4">
+                <div style="font-size:2.5rem;">&#x1F4AC;</div>
+                <h6 class="mt-2 fw-semibold">Mensagem para a ONG</h6>
+                <p class="text-muted small">Opcional — conte mais sobre você, sua rotina e por que este pet seria perfeito para sua família.</p>
+              </div>
+              <textarea class="form-control" id="mensagem" rows="5" placeholder="Ex: Moro em casa com quintal, trabalho em casa e teria companhia para o pet o dia todo..."></textarea>
+            </div>
+
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="btn-confirmar-interesse">Confirmar Interesse</button>
+
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <div class="ms-auto d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" id="btn-prev" style="display:none" onclick="prevStep()">
+              <i class="bi bi-chevron-left me-1"></i>Anterior
+            </button>
+            <button type="button" class="btn btn-success" id="btn-next" onclick="nextStep()">
+              Próximo <i class="bi bi-chevron-right ms-1"></i>
+            </button>
+            <button type="button" class="btn btn-success" id="btn-confirmar-interesse" style="display:none">
+              <i class="bi bi-check-circle-fill me-1"></i>Confirmar Interesse
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -82,14 +221,14 @@
   <script src="/js/app.js"></script>
   <script>
     let petAtual = null;
+    let currentStep = 1;
+    const TOTAL_STEPS = 3;
+    const PERGUNTAS_NOMES = ['q_experiencia','q_moradores','q_outros_animais','q_criancas','q_area_externa','q_ciente_custos','q_compromisso'];
 
     document.addEventListener('DOMContentLoaded', async () => {
       const params = new URLSearchParams(window.location.search);
       const petId = params.get('id');
-      if (!petId) {
-        window.location.href = '/pages/pets.html';
-        return;
-      }
+      if (!petId) { window.location.href = '/pages/pets.html'; return; }
 
       try {
         const res = await apiRequest(`/pets/${petId}`);
@@ -100,7 +239,7 @@
         const container = document.getElementById('pet-detail');
         const localizacao = petAtual.cidade
           ? `${petAtual.cidade}${petAtual.estado ? ', ' + petAtual.estado.toUpperCase() : ''}`
-          : null;
+          : 'Não informado';
         container.innerHTML = `
           <div class="col-md-6">
             <img src="${petAtual.imagem_url || 'https://placehold.co/600x400?text=Sem+Foto'}" class="img-fluid rounded-3 shadow" alt="Foto de ${petAtual.nome}" style="width:100%; max-height:450px; object-fit:cover;">
@@ -114,8 +253,8 @@
               <tr><th style="width:140px">Espécie</th><td>${capitalize(petAtual.especie)}</td></tr>
               <tr><th>Porte</th><td>${capitalize(petAtual.porte)}</td></tr>
               <tr><th>Sexo</th><td>${petAtual.sexo === 'macho' ? '<i class="bi bi-gender-male text-primary me-1"></i>Macho' : '<i class="bi bi-gender-female text-danger me-1"></i>Fêmea'}</td></tr>
-              <tr><th>Idade</th><td>${etapaVida(petAtual.idade)} · ${formatIdade(petAtual.idade)}</td></tr>
-              ${localizacao ? `<tr><th>Localização</th><td><i class="bi bi-geo-alt text-danger me-1"></i>${localizacao}</td></tr>` : ''}
+              <tr><th>Idade</th><td>${etapaVida(petAtual.idade)} &middot; ${formatIdade(petAtual.idade)}</td></tr>
+              <tr><th>Localização</th><td><i class="bi bi-geo-alt text-danger me-1"></i>${localizacao}</td></tr>
             </table>
             <h5>Histórico de Saúde</h5>
             <p>${petAtual.historico_saude}</p>
@@ -124,13 +263,12 @@
           </div>
         `;
 
-        // Mostrar botão de interesse se logado e pet disponível
         const acaoDiv = document.getElementById('acao-adocao');
         if (petAtual.status === 'disponivel') {
           if (isLoggedIn() && !isAdmin()) {
             acaoDiv.innerHTML = `
-              <button class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#interesseModal">
-                <i class="bi bi-heart-fill"></i> Tenho Interesse
+              <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#interesseModal">
+                <i class="bi bi-heart-fill me-1"></i> Tenho Interesse
               </button>
             `;
           } else if (!isLoggedIn()) {
@@ -146,20 +284,95 @@
       }
     });
 
+    function showStep(step) {
+      document.querySelectorAll('.form-step').forEach(el => el.classList.add('d-none'));
+      document.getElementById(`step-${step}`).classList.remove('d-none');
+      for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        dot.classList.remove('active', 'completed');
+        if (i < step) dot.classList.add('completed');
+        else if (i === step) dot.classList.add('active');
+        if (i < TOTAL_STEPS) document.getElementById(`line-${i}`).classList.toggle('completed', i < step);
+      }
+      document.getElementById('btn-prev').style.display = step === 1 ? 'none' : '';
+      document.getElementById('btn-next').style.display = step < TOTAL_STEPS ? '' : 'none';
+      document.getElementById('btn-confirmar-interesse').style.display = step === TOTAL_STEPS ? '' : 'none';
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        for (const name of PERGUNTAS_NOMES) {
+          if (!document.querySelector(`input[name="${name}"]:checked`)) {
+            showToast('Responda todas as perguntas antes de continuar.', 'error');
+            return false;
+          }
+        }
+      }
+      if (step === 2) {
+        if (!document.getElementById('doc_identidade').files[0]) {
+          showToast('Envie seu documento de identidade.', 'error');
+          return false;
+        }
+        if (!document.getElementById('foto_local').files[0]) {
+          showToast('Envie a foto do local onde o animal ficará.', 'error');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) return;
+      if (currentStep < TOTAL_STEPS) { currentStep++; showStep(currentStep); }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) { currentStep--; showStep(currentStep); }
+    }
+
+    document.getElementById('interesseModal').addEventListener('show.bs.modal', () => {
+      currentStep = 1;
+      document.getElementById('interesse-form').reset();
+      showStep(1);
+    });
+
     document.getElementById('btn-confirmar-interesse').addEventListener('click', async () => {
       if (!petAtual) return;
       showLoading();
       try {
+        // 1. Upload arquivos
+        const formData = new FormData();
+        formData.append('doc', document.getElementById('doc_identidade').files[0]);
+        formData.append('foto_local', document.getElementById('foto_local').files[0]);
+        const uploadRes = await fetch('/api/upload/adocao', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${getToken()}` },
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadData.success) throw new Error(uploadData.message || 'Erro no upload dos arquivos');
+
+        // 2. Montar respostas
+        const perguntas = {};
+        for (const name of PERGUNTAS_NOMES) {
+          perguntas[name] = document.querySelector(`input[name="${name}"]:checked`)?.value === 'true';
+        }
+
+        // 3. Enviar solicitação
         await apiRequest('/adocoes', {
           method: 'POST',
           body: JSON.stringify({
             pet_id: petAtual.id,
             mensagem: document.getElementById('mensagem').value || undefined,
+            perguntas,
+            doc_identidade_url: uploadData.data.doc_url,
+            foto_local_url: uploadData.data.foto_url,
           }),
         });
+
         bootstrap.Modal.getInstance(document.getElementById('interesseModal')).hide();
-        showToast('Interesse enviado com sucesso! Acompanhe o status em "Minhas Solicitações".');
-        document.getElementById('acao-adocao').innerHTML = '<div class="alert alert-success">Seu interesse foi enviado! Aguarde a análise da ONG.</div>';
+        showToast('Interesse enviado! Acompanhe em "Minhas Solicitações".');
+        document.getElementById('acao-adocao').innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle-fill me-2"></i>Sua solicitação foi enviada! Aguarde a análise da ONG.</div>';
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
