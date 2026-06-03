@@ -1,3 +1,5 @@
+#LINK DOCUMENTAÇÃO: https://app.notion.com/p/ViraLata-Club-Documenta-o-T-cnica-3728eed5821e807786a2c11661ecfc29
+
 # COMO RODAR O PROJETO
 
 # Clonar repositório
